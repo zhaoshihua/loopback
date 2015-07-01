@@ -269,6 +269,14 @@ module.exports = function(User) {
    */
 
   User.logout = function(tokenId, fn) {
+    if(!tokenId) {
+      process.nextTick(function() {
+        var err = new Error('access token is required to logout');
+        err.status = 400;
+        fn(err);
+      });
+      return;
+    }
     this.relations.accessTokens.modelTo.findById(tokenId, function(err, accessToken) {
       if (err) {
         fn(err);

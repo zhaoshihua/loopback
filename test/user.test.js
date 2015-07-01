@@ -720,6 +720,14 @@ describe('User', function() {
       }
     });
 
+    it('Error when an accessToken is not provided', function(done) {
+      User.logout(null, function(err) {
+        expect(err).to.have.property('message');
+        expect(err).to.have.property('status', 400);
+        done();
+      });
+    })
+
     function verify(token, done) {
       assert(token);
 
