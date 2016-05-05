@@ -719,16 +719,31 @@ module.exports = function(User) {
     assert(loopback.AccessToken, 'AccessToken model must be defined before User model');
     UserModel.accessToken = loopback.AccessToken;
 
-    // email validation regex
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    UserModel.validatesFormatOf('email', { with: re, message: 'Must provide a valid email' });
-
     // FIXME: We need to add support for uniqueness of composite keys in juggler
     if (!(UserModel.settings.realmRequired || UserModel.settings.realmDelimiter)) {
       UserModel.validatesUniquenessOf('email', { message: 'Email already exists' });
       UserModel.validatesUniquenessOf('username', { message: 'User already exists' });
+    } else {
+      // forcing a rebuilt of email and username validations
+      // this is to have extended user with realm, not inherit the uniqueness
+      delete UserModel.validations.email;
+      delete UserModel.validations.username;
+      // rebuilding the validations for realm users
+      if (UserModel.definition.properties.email.required)
+        UserModel.validatesPresenceOf('email');
+      if (UserModel.definition.properties.username.required)
+        UserModel.validatesPresenceOf('name');
+      UserModel.validatesUniquenessOf('email', {
+        message: 'Email already exists',
+        scopedTo: ['realm'] });
+      UserModel.validatesUniquenessOf('username', {
+        message: 'User already exists',
+        scopedTo: ['realm'] });
     }
+
+    // email validation regex
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    UserModel.validatesFormatOf('email', { with: re, message: 'Must provide a valid email' });
 
     return UserModel;
   };
