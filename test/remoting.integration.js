@@ -81,26 +81,26 @@ describe('remoting - integration', function() {
 
   describe('Model shared classes', function() {
     it('has expected remote methods with default model.settings.replaceOnPUT' +
-      'set to true (2.x)',
+      'set to false (2.x)',
     function() {
       var storeClass = findClass('store');
       var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
 
       var expectedMethods = [
         'create(data:object):store POST /stores',
-        'patchOrCreate(data:object):store PATCH /stores',
-        'patchOrCreate(data:object):store PUT /stores',
+        'upsert(data:object):store PATCH /stores',
+        'upsert(data:object):store PUT /stores',
         'replaceOrCreate(data:object):store POST /stores/replaceOrCreate',
         'exists(id:any):boolean GET /stores/:id/exists',
         'findById(id:any,filter:object):store GET /stores/:id',
-        'prototype.patchAttributes(data:object):store PUT /stores/:id',
+        'prototype.updateAttributes(data:object):store PUT /stores/:id',
         'replaceById(id:any,data:object):store POST /stores/:id/replace',
         'find(filter:object):store GET /stores',
         'findOne(filter:object):store GET /stores/findOne',
         'updateAll(where:object,data:object):object POST /stores/update',
         'deleteById(id:any):object DELETE /stores/:id',
         'count(where:object):number GET /stores/count',
-        'prototype.patchAttributes(data:object):store PATCH /stores/:id',
+        'prototype.updateAttributes(data:object):store PATCH /stores/:id',
         'createChangeStream(options:object):ReadableStream POST /stores/change-stream',
       ];
 
@@ -207,12 +207,12 @@ describe('With model.settings.replaceOnPUT false', function() {
     var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
 
     var expectedMethods = [
-      'patchOrCreate(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating',
-      'patchOrCreate(data:object):storeWithReplaceOnPUTfalse PUT /stores-updating',
+      'upsert(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating',
+      'upsert(data:object):storeWithReplaceOnPUTfalse PUT /stores-updating',
       'replaceOrCreate(data:object):storeWithReplaceOnPUTfalse POST /stores-updating/replaceOrCreate',
       'replaceById(id:any,data:object):storeWithReplaceOnPUTfalse POST /stores-updating/:id/replace',
-      'prototype.patchAttributes(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating/:id',
-      'prototype.patchAttributes(data:object):storeWithReplaceOnPUTfalse PUT /stores-updating/:id',
+      'prototype.updateAttributes(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating/:id',
+      'prototype.updateAttributes(data:object):storeWithReplaceOnPUTfalse PUT /stores-updating/:id',
     ];
 
     expect(methods).to.include.members(expectedMethods);
@@ -232,12 +232,12 @@ describe('With model.settings.replaceOnPUT true', function() {
     var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
 
     var expectedMethods = [
-      'patchOrCreate(data:object):storeWithReplaceOnPUTtrue PATCH /stores-replacing',
+      'upsert(data:object):storeWithReplaceOnPUTtrue PATCH /stores-replacing',
       'replaceOrCreate(data:object):storeWithReplaceOnPUTtrue POST /stores-replacing/replaceOrCreate',
       'replaceOrCreate(data:object):storeWithReplaceOnPUTtrue PUT /stores-replacing',
       'replaceById(id:any,data:object):storeWithReplaceOnPUTtrue POST /stores-replacing/:id/replace',
       'replaceById(id:any,data:object):storeWithReplaceOnPUTtrue PUT /stores-replacing/:id',
-      'prototype.patchAttributes(data:object):storeWithReplaceOnPUTtrue PATCH /stores-replacing/:id',
+      'prototype.updateAttributes(data:object):storeWithReplaceOnPUTtrue PATCH /stores-replacing/:id',
     ];
 
     expect(methods).to.include.members(expectedMethods);
