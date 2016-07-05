@@ -9,6 +9,7 @@ var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
 var app = require(path.join(SIMPLE_APP, 'server/server.js'));
 var assert = require('assert');
+var expect = require('chai').expect;
 
 describe('remoting - integration', function() {
   lt.beforeEach.withApp(app);
