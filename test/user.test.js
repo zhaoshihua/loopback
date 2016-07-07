@@ -214,6 +214,18 @@ describe('User', function() {
       assert(u2.password === u1.password);
     });
 
+    it('should invalidate accessToken once user is deleted', function(done) {
+      User.create({ email: 'b@c.com', password: 'bar' }, function(err, userInstance) {
+        User.login({ email: 'b@c.com', password: 'bar' }, function(err, accessToken) {
+          assert(accessToken.id);
+          User.deleteById(userInstance.id, function(err){
+            assert(!accessToken.id);
+            done();
+       })
+    });
+  });
+});
+
     describe('custom password hash', function() {
       var defaultHashPassword, defaultValidatePassword;
 
