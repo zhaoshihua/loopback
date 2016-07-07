@@ -214,11 +214,13 @@ describe('User', function() {
       assert(u2.password === u1.password);
     });
 
-    it('should invalidate accessToken once user is deleted', function(done) {
+    it('invalidates the user\'s accessToken when the user is deleted', function(done) {
       User.create({ email: 'b@c.com', password: 'bar' }, function(err, userInstance) {
         User.login({ email: 'b@c.com', password: 'bar' }, function(err, accessToken) {
+          if (err) return done(err);
           assert(accessToken.id);
-          User.deleteById(userInstance.id, function(err){
+          User.deleteById(userInstance.id, function(err) {
+            if (err) return done(err);
             assert(!accessToken.id);
             done();
        })
